@@ -3,30 +3,27 @@ from .constants import Axis
 
 
 def rect_intersect(item1, item2, x, y):
+    """Check if two items intersect in the given axis"""
     d1 = item1.get_dimension()
     d2 = item2.get_dimension()
 
-    cx1 = item1.position[x] + d1[x]/2
-    cy1 = item1.position[y] + d1[y]/2
-    cx2 = item2.position[x] + d2[x]/2
-    cy2 = item2.position[y] + d2[y]/2
+    dx = abs(item1.position[x] - item2.position[x])
+    dy = abs(item1.position[y] - item2.position[y])
 
-    ix = max(cx1, cx2) - min(cx1, cx2)
-    iy = max(cy1, cy2) - min(cy1, cy2)
-
-    return ix < (d1[x]+d2[x])/2 and iy < (d1[y]+d2[y])/2
+    return dx < (d1[x] + d2[x]) / 2 and dy < (d1[y] + d2[y]) / 2
 
 
 def intersect(item1, item2):
+    """Check if two items intersect"""
     return (
-        rect_intersect(item1, item2, Axis.WIDTH, Axis.HEIGHT) and
-        rect_intersect(item1, item2, Axis.HEIGHT, Axis.DEPTH) and
-        rect_intersect(item1, item2, Axis.WIDTH, Axis.DEPTH)
+        rect_intersect(item1, item2, Axis.Y_AXIS, Axis.Z_AXIS)
+        and rect_intersect(item1, item2, Axis.Z_AXIS, Axis.X_AXIS)
+        and rect_intersect(item1, item2, Axis.Y_AXIS, Axis.X_AXIS)
     )
 
 
 def get_limit_number_of_decimals(number_of_decimals):
-    return Decimal('1.{}'.format('0' * number_of_decimals))
+    return Decimal("1.{}".format("0" * number_of_decimals))
 
 
 def set_to_decimal(value, number_of_decimals):
