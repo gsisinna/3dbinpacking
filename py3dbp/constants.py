@@ -1,5 +1,5 @@
 class RotationType:
-    """Rotation type of an item"""
+    """Rotation type of an item."""
 
     RT_XYZ = 0
     RT_YXZ = 1
@@ -12,7 +12,7 @@ class RotationType:
 
 
 class Axis:
-    """ Axis of an item """ ""
+    """Axis of an item."""
 
     X_AXIS = 0
     Y_AXIS = 1

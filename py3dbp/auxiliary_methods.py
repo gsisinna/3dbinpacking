@@ -1,9 +1,10 @@
 from decimal import Decimal
+
 from .constants import Axis
 
 
 def rect_intersect(item1, item2, x, y):
-    """Check if two items intersect in the given axis"""
+    """Check if two items intersect in the given axis."""
     d1 = item1.get_dimension()
     d2 = item2.get_dimension()
 
@@ -14,7 +15,7 @@ def rect_intersect(item1, item2, x, y):
 
 
 def intersect(item1, item2):
-    """Check if two items intersect"""
+    """Check if two items intersect."""
     return (
         rect_intersect(item1, item2, Axis.Y_AXIS, Axis.Z_AXIS)
         and rect_intersect(item1, item2, Axis.Z_AXIS, Axis.X_AXIS)
@@ -23,7 +24,7 @@ def intersect(item1, item2):
 
 
 def get_limit_number_of_decimals(number_of_decimals):
-    return Decimal("1.{}".format("0" * number_of_decimals))
+    return Decimal('1.{}'.format('0' * number_of_decimals))
 
 
 def set_to_decimal(value, number_of_decimals):
