@@ -68,11 +68,14 @@ class Item:
 class Pallet:
     """Pallet class to be packed with items."""
 
-    def __init__(self, name, x_dim, y_dim, z_dim, max_weight):
+    def __init__(self, name, x_dim, y_dim, z_dim, max_weight, x_spacing=0.0, y_spacing=0.002, z_spacing=0.0):
         self.name = name
         self.x_dim = x_dim
         self.y_dim = y_dim
         self.z_dim = z_dim
+        self.x_spacing = x_spacing
+        self.y_spacing = y_spacing
+        self.z_spacing = z_spacing
         self.max_weight = max_weight
         self.items = []
         self.unfitted_items = []
@@ -82,6 +85,9 @@ class Pallet:
         self.y_dim = set_to_decimal(self.y_dim, number_of_decimals)
         self.z_dim = set_to_decimal(self.z_dim, number_of_decimals)
         self.x_dim = set_to_decimal(self.x_dim, number_of_decimals)
+        self.x_spacing = set_to_decimal(self.x_spacing, number_of_decimals)
+        self.y_spacing = set_to_decimal(self.y_spacing, number_of_decimals)
+        self.z_spacing = set_to_decimal(self.z_spacing, number_of_decimals)
         self.max_weight = set_to_decimal(self.max_weight, number_of_decimals)
         self.number_of_decimals = number_of_decimals
 
@@ -117,9 +123,9 @@ class Pallet:
             item.rotation_type = i
             dimension = item.get_dimension()
             if (
-                self.x_dim < pivot[0] + dimension[0]
-                or self.y_dim < pivot[1] + dimension[1]
-                or self.z_dim < pivot[2] + dimension[2]
+                self.x_dim < pivot[0] + dimension[0] + self.x_spacing
+                or self.y_dim < pivot[1] + dimension[1] + self.y_spacing
+                or self.z_dim < pivot[2] + dimension[2] + self.z_spacing
             ):
                 continue
 
@@ -127,7 +133,7 @@ class Pallet:
 
             for current_item_in_pallet in self.items:
                 # Check if item intersect with other items
-                if intersect(current_item_in_pallet, item):
+                if intersect(current_item_in_pallet, item, self.x_spacing, self.y_spacing, self.z_spacing):
                     fit = False
                     break
 
@@ -152,11 +158,14 @@ class Pallet:
 class Packer:
     """Packer class to pack items into pallets."""
 
-    def __init__(self):
+    def __init__(self, x_spacing, y_spacing, z_spacing):
         self.pallets = []
         self.items = []
         self.unfit_items = []
         self.total_items = 0
+        self.x_spacing = x_spacing
+        self.y_spacing = y_spacing
+        self.z_spacing = z_spacing
 
     def add_pallet(self, pallet):
         return self.pallets.append(pallet)
@@ -184,11 +193,11 @@ class Packer:
                 pivot = [0, 0, 0]
                 x_dim, y_dim, z_dim = ib.get_dimension()
                 if axis == Axis.X_AXIS:
-                    pivot = [ib.position[0] + x_dim, ib.position[1], ib.position[2]]
+                    pivot = [ib.position[0] + x_dim + pallet.x_spacing, ib.position[1], ib.position[2]]
                 elif axis == Axis.Y_AXIS:
-                    pivot = [ib.position[0], ib.position[1] + y_dim, ib.position[2]]
+                    pivot = [ib.position[0], ib.position[1] + y_dim + pallet.y_spacing, ib.position[2]]
                 elif axis == Axis.Z_AXIS:
-                    pivot = [ib.position[0], ib.position[1], ib.position[2] + z_dim]
+                    pivot = [ib.position[0], ib.position[1], ib.position[2] + z_dim + pallet.z_spacing]
 
                 if pallet.put_item(item, pivot):
                     fitted = True
