@@ -1,27 +1,25 @@
 from decimal import Decimal
+
 from .constants import Axis
 
 
-def rect_intersect(item1, item2, x, y):
+def rect_intersect(item1, item2, x, y, x_spacing=0, y_spacing=0):
+    """Check if two items intersect in the given axis."""
     d1 = item1.get_dimension()
     d2 = item2.get_dimension()
 
-    cx1 = item1.position[x] + d1[x]/2
-    cy1 = item1.position[y] + d1[y]/2
-    cx2 = item2.position[x] + d2[x]/2
-    cy2 = item2.position[y] + d2[y]/2
+    dx = abs(item1.position[x] - item2.position[x]) - x_spacing
+    dy = abs(item1.position[y] - item2.position[y]) - y_spacing
 
-    ix = max(cx1, cx2) - min(cx1, cx2)
-    iy = max(cy1, cy2) - min(cy1, cy2)
-
-    return ix < (d1[x]+d2[x])/2 and iy < (d1[y]+d2[y])/2
+    return dx < (d1[x] + d2[x]) / 2 and dy < (d1[y] + d2[y]) / 2
 
 
-def intersect(item1, item2):
+def intersect(item1, item2, x_spacing=0, y_spacing=0, z_spacing=0):
+    """Check if two items intersect."""
     return (
-        rect_intersect(item1, item2, Axis.WIDTH, Axis.HEIGHT) and
-        rect_intersect(item1, item2, Axis.HEIGHT, Axis.DEPTH) and
-        rect_intersect(item1, item2, Axis.WIDTH, Axis.DEPTH)
+        rect_intersect(item1, item2, Axis.Y_AXIS, Axis.Z_AXIS, y_spacing, z_spacing)
+        and rect_intersect(item1, item2, Axis.Z_AXIS, Axis.X_AXIS, z_spacing, x_spacing)
+        and rect_intersect(item1, item2, Axis.Y_AXIS, Axis.X_AXIS, y_spacing, x_spacing)
     )
 
 
