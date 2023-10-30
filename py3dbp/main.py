@@ -6,7 +6,7 @@ from .constants import Axis, RotationType
 
 
 DEFAULT_NUMBER_OF_DECIMALS = 3
-START_POSITION = [Decimal(0.0), Decimal(0.0), Decimal(0.3)]
+START_POSITION = [0, 0, 0]
 
 
 class Item:
@@ -158,7 +158,7 @@ class Pallet:
 class Packer:
     """Packer class to pack items into pallets."""
 
-    def __init__(self, x_spacing, y_spacing, z_spacing):
+    def __init__(self, x_spacing, y_spacing, z_spacing, x_offset=0.0, y_offset=0.0, z_offset=0.0):
         self.pallets = []
         self.items = []
         self.unfit_items = []
@@ -166,6 +166,9 @@ class Packer:
         self.x_spacing = x_spacing
         self.y_spacing = y_spacing
         self.z_spacing = z_spacing
+        self.x_offset = x_offset
+        self.y_offset = y_offset
+        self.z_offset = z_offset
 
     def add_pallet(self, pallet):
         return self.pallets.append(pallet)
@@ -179,7 +182,7 @@ class Packer:
         fitted = False
 
         if not pallet.items:
-            response = pallet.put_item(item, START_POSITION)
+            response = pallet.put_item(item, [Decimal(self.x_offset), Decimal(self.y_offset), Decimal(self.z_offset)])
 
             if not response:
                 pallet.unfitted_items.append(item)
